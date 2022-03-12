@@ -1,11 +1,12 @@
 import argparse
+import datetime
 import json
 import os
 import sys
 
-from towel.generate_towel_scene import generate_scene
 import bpy
-import datetime
+from towel.generate_towel_scene import generate_scene
+
 
 def generate_data(output_dir, seed, resolution=256):
     print("test")
@@ -48,12 +49,9 @@ if __name__ == "__main__":
         parser = argparse.ArgumentParser()
         parser.add_argument("seed", type=int)
         parser.add_argument("--resolution", type=int, default=256)
-        parser.add_argument(
-            "-d", "--dir", dest="datasets_dir", default="./datasets/" # blender folder/datasets
-        )
+        parser.add_argument("-d", "--dir", dest="datasets_dir", default="./datasets/")  # blender folder/datasets
         args = parser.parse_known_args(argv)[0]
 
         output_dir = os.path.join(args.datasets_dir, f"towel_{datetime.datetime.now()}")
-
 
         generate_data(output_dir, args.seed, args.resolution)

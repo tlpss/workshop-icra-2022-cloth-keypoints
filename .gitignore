@@ -1,3 +1,9 @@
 **assets/
 **egg-info/
 **__pycache__/
+**wandb**/
+**dataset**
+**artifacts**
+keypoint-detection/
+BlenderProc/
+airo-blender-toolkit/

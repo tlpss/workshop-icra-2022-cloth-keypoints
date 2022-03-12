@@ -1,4 +1,3 @@
-
 import os
 import subprocess
 
@@ -28,5 +27,5 @@ textures_to_ignore = [
     "fabric_pattern_05",
     "fabric_pattern_07",
     "leather_red_02",
-    "leather_red_03"
-] # noqa
+    "leather_red_03",
+]  # noqa

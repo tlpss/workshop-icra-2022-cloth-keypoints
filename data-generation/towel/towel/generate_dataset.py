@@ -9,7 +9,7 @@ from towel.generate_data_sample import generate_data
 
 def generate_dataset(amount_of_samples, datasets_dir, resolution=256):
     dirname = f"towel n={amount_of_samples} ({datetime.datetime.now()})"
-    
+
     output_dir = os.path.join(datasets_dir, dirname)
     os.makedirs(output_dir)
 

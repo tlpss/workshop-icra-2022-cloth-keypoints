@@ -10,31 +10,33 @@ from mathutils import Color
 os.environ["INSIDE_OF_THE_INTERNAL_BLENDER_PYTHON_ENVIRONMENT"] = "1"
 import blenderproc as bproc
 
+
 class Towel(abt.KeypointedObject):
-    keypoint_ids = {
-        "corner": [0,1,2,3]}
-        
-    def __init__(self , length, width):
+    keypoint_ids = {"corner": [0, 1, 2, 3]}
+
+    def __init__(self, length, width):
         self.width = width
         self.length = length
-        
-        mesh = self._create_mesh()
-        blender_obj = abt.make_object(name="Towel", mesh = mesh)
-        super().__init__(blender_obj, Towel.keypoint_ids)
-        
-    def _create_mesh(self):
-        w,l = float(self.width), float(self.length)
-        
-        vertices = [np.array([-w/2, -l/2, 0.0]),
-                    np.array([-w/2, l/2, 0.0]),
-                    np.array([w/2,l/2,0.0]),
-                    np.array([w/2,-l/2,0.0]) 
-                    ]
-        edges = [(0,1),(1,2),(2,3),(3,4)]
-        faces = [(0,1,2,3)]
 
-        return vertices, edges, faces   
-             
+        mesh = self._create_mesh()
+        blender_obj = abt.make_object(name="Towel", mesh=mesh)
+        super().__init__(blender_obj, Towel.keypoint_ids)
+
+    def _create_mesh(self):
+        w, l = float(self.width), float(self.length)
+
+        vertices = [
+            np.array([-w / 2, -l / 2, 0.0]),
+            np.array([-w / 2, l / 2, 0.0]),
+            np.array([w / 2, l / 2, 0.0]),
+            np.array([w / 2, -l / 2, 0.0]),
+        ]
+        edges = [(0, 1), (1, 2), (2, 3), (3, 4)]
+        faces = [(0, 1, 2, 3)]
+
+        return vertices, edges, faces
+
+
 def generate_scene(seed):
     os.environ["BLENDER_PROC_RANDOM_SEED"] = str(seed)
     os.getenv("BLENDER_PROC_RANDOM_SEED")
@@ -42,7 +44,7 @@ def generate_scene(seed):
 
     root_dir = "/home/tlips/Documents/workshop-icra-2022-cloth-keypoints/data-generation"
     haven_folder = os.path.join(root_dir, "utils", "assets", "haven")
-    
+
     haven_textures_folder = os.path.join(haven_folder, "textures")
     print(haven_folder)
 
@@ -82,13 +84,13 @@ def generate_scene(seed):
     camera_rotation = bproc.python.camera.CameraUtility.rotation_from_forward_vec((0, 0, 0) - camera_location)
     camera_pose = bproc.math.build_transformation_mat(camera_location, camera_rotation)
     bproc.camera.add_camera_pose(camera_pose)
-    
-    camera.scale = [0.2] * 3 # blender camera object size (no effect on generated images)
-    camera.data.lens = 28 # focal distance [mm] - fov approx
 
-    while True: 
-        x_shift = float(np.random.uniform(-0.3,0.3))
-        y_shift =float(np.random.uniform(-0.3,0.3))
+    camera.scale = [0.2] * 3  # blender camera object size (no effect on generated images)
+    camera.data.lens = 28  # focal distance [mm] - fov approx
+
+    while True:
+        x_shift = float(np.random.uniform(-0.3, 0.3))
+        y_shift = float(np.random.uniform(-0.3, 0.3))
 
         towel.set_location((x_shift, y_shift, 0.001))
         towel.persist_transformation_into_mesh()
@@ -96,37 +98,34 @@ def generate_scene(seed):
         break
 
         if len(towel.keypoints_2D_visible) < 4:
-            towel.set_location((0,0,0.001))
+            towel.set_location((0, 0, 0.001))
             towel.persist_transformation_into_mesh()
             print("resample box position")
         else:
             break
-    
-    
 
     hdri_path = bproc.loader.get_random_world_background_hdr_img_path_from_haven(haven_folder)
     hdri_rotation = np.random.uniform(0, 2 * np.pi)
     abt.load_hdri(hdri_path, hdri_rotation)
-    
-    # shader graph
-    
-    tree = bpy.data.materials["Towel"].node_tree
-    render_node = tree.nodes["Principled BSDF"]
-    output_node = tree.nodes["Material Output"]
-    
 
-    
-    
+    # shader graph
+
+    tree = bpy.data.materials["Towel"].node_tree
+    tree.nodes["Principled BSDF"]
+    output_node = tree.nodes["Material Output"]
+
     do_displacement_noise = True
-    
+
     if do_displacement_noise:
         noise_texture_node = tree.nodes.new("ShaderNodeTexNoise")
         tree.links.new(noise_texture_node.outputs["Color"], output_node.inputs["Displacement"])
-        noise_texture_node.inputs["Roughness"].default_value = np.random.uniform(0.5, 1.0) # 0.5 - 1.0
+        noise_texture_node.inputs["Roughness"].default_value = np.random.uniform(0.5, 1.0)  # 0.5 - 1.0
         noise_texture_node.inputs["Detail"].default_value = 7.0
         noise_texture_node.inputs["Scale"].default_value = np.random.uniform(0.0, 0.3)
 
     return towel
+
+
 if __name__ == "__main__":
     seed = 2022
     if "--" in sys.argv:
@@ -136,7 +135,6 @@ if __name__ == "__main__":
         args = parser.parse_known_args(argv)[0]
         seed = args.seed
     towel = generate_scene(seed)
-    #towel.visualize_keypoints()
-    
-    
+    # towel.visualize_keypoints()
+
     print("done")
