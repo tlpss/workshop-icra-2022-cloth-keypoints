@@ -23,13 +23,13 @@ class Towel(abt.KeypointedObject):
         super().__init__(blender_obj, Towel.keypoint_ids)
 
     def _create_mesh(self):
-        w, l = float(self.width), float(self.length)
+        width, length = float(self.width), float(self.length)
 
         vertices = [
-            np.array([-w / 2, -l / 2, 0.0]),
-            np.array([-w / 2, l / 2, 0.0]),
-            np.array([w / 2, l / 2, 0.0]),
-            np.array([w / 2, -l / 2, 0.0]),
+            np.array([-width / 2, -length / 2, 0.0]),
+            np.array([-width / 2, length / 2, 0.0]),
+            np.array([width / 2, length / 2, 0.0]),
+            np.array([width / 2, -length / 2, 0.0]),
         ]
         edges = [(0, 1), (1, 2), (2, 3), (3, 4)]
         faces = [(0, 1, 2, 3)]

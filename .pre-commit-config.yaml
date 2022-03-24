@@ -36,4 +36,3 @@ repos:
     hooks:
     -   id: flake8
         name: flake8 - linter
-        files: keypoint_detection/keypoint_detection/

@@ -35,7 +35,7 @@ Zed2i.list_camera_serial_numbers()
 zed = Zed2i()
 cam_matrix = zed.get_mono_camera_matrix()
 
-# get camera to aruco pose
+# capture image and get camera to aruco pose
 img = zed.get_mono_rgb_image()
 img = zed.image_shape_torch_to_opencv(img)
 cam_matrix = zed.get_mono_camera_matrix()
@@ -57,6 +57,7 @@ while True:
         break
 
 cv2.destroyAllWindows()
+
 # once 4 are clicked transform them to world coords
 image_coords = np.array(clicked_coords)
 aruco_coords = [
@@ -69,6 +70,7 @@ con = input("Continue? Y/N")
 if con == "N":
     raise ValueError("not continuing")
 
+# create fold trajectory instance
 kp1, kp2, kp3, kp4 = robot_coords
 cloth = TowelFold(kp1, kp2, kp3, kp4)
 
@@ -76,9 +78,10 @@ print(cloth.x)
 pregrasp_in_towel = cloth.pregrasp_pose_in_cloth_frame(0.05)
 pregrasp = cloth.robot_to_cloth_base_transform @ pregrasp_in_towel
 print(pregrasp)
-print(cloth.pose_to_rotvec_waypoint(pregrasp))
-pregrasp_pose_rotvec = cloth.pose_to_rotvec_waypoint(pregrasp)
+print(cloth.homogeneous_pose_to_position_and_rotvec(pregrasp))
+pregrasp_pose_rotvec = cloth.homogeneous_pose_to_position_and_rotvec(pregrasp)
 
+# compute fold trajectory
 vel = 0.2
 acc = 0.1
 blend = 0.01
@@ -86,9 +89,12 @@ wps = []
 num_waypoints = 50
 for t in range(0, num_waypoints):
     i = t / num_waypoints
-    wp = cloth.pose_to_rotvec_waypoint(cloth.robot_to_cloth_base_transform @ cloth.fold_pose_in_cloth_frame(i))
+    wp = cloth.homogeneous_pose_to_position_and_rotvec(
+        cloth.robot_to_cloth_base_transform @ cloth.fold_pose_in_cloth_frame(i)
+    )
     wps.append(wp.tolist() + [vel, acc, blend])
 
+# execute motions
 rtde_c = RTDEControl("10.42.0.162")
 gripper = Robotiq2F85TCP("10.42.0.162")
 gripper.activate_gripper()
@@ -97,7 +103,11 @@ gripper.move_to_position(20, 250, 10)
 rtde_c.moveL(pregrasp_pose_rotvec, vel, acc)
 check = input("continue fold? Press Enter")
 rtde_c.moveL(
-    cloth.pose_to_rotvec_waypoint(cloth.robot_to_cloth_base_transform @ cloth.fold_pose_in_cloth_frame(0)), vel, acc
+    cloth.homogeneous_pose_to_position_and_rotvec(
+        cloth.robot_to_cloth_base_transform @ cloth.fold_pose_in_cloth_frame(0)
+    ),
+    vel,
+    acc,
 )
 gripper.move_to_position(230, 255, 10)
 rtde_c.moveL(wps)

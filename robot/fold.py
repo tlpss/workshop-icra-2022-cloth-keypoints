@@ -1,6 +1,5 @@
 import numpy as np
 import scipy.spatial.transform as transform
-from rtde_control import RTDEControlInterface as RTDEControl
 
 
 def transformation_matrix_from_position_and_vecs(pos, x, y, z):
@@ -30,12 +29,18 @@ class TowelFold:
         )
 
     def fold_pose_in_cloth_frame(self, t):
+        """Parameterization of the fold trajectory
+        t = 0 is the grasp pose, t = 1 is the final (release) pose
+        """
         assert t <= 1 and t >= 0
-        angle = np.pi - t * np.pi
-        position = np.array([self.len / 2.4 * np.cos(angle), 0, self.len / 2.5 * np.sin(angle)])
-        position[2] += 0.085 / 2 * np.sin(np.pi / 4) - 0.01
-        # offset for open gripper
-        orientation_angle = -3 * np.pi / 4 - t * np.pi / 4
+        position_angle = np.pi - t * np.pi
+        position = np.array([self.len / 2.4 * np.cos(position_angle), 0, self.len / 2.5 * np.sin(position_angle)])
+
+        position[2] -= 0.013  # gripper is opened here so point of fingers is now 13mm above closed-TCP
+        position[2] -= 0.01  # offset of the mounting plate
+        position[2] += 0.085 / 2 * np.sin(np.pi / 4)  # want the low finger to touch the table so offset from TCP
+
+        orientation_angle = -3 * np.pi / 4 - t * np.pi / 4 * 1.2
         x = np.array([np.cos(orientation_angle), 0, np.sin(orientation_angle)])
         x /= np.linalg.norm(x)
         y = np.array([0, 1, 0])
@@ -43,63 +48,19 @@ class TowelFold:
         z = np.cross(x, y)
         return transformation_matrix_from_position_and_vecs(position, x, y, z)
 
-    def pregrasp_pose_in_cloth_frame(self, alpha):
+    def grasp_pose_in_cloth_frame(self):
+        return self.fold_pose_in_cloth_frame(0)
+
+    def pregrasp_pose_in_cloth_frame(self, alpha=-0.05):
         grasp_pose = self.fold_pose_in_cloth_frame(0)
         pregrasp_pose = grasp_pose
+        # create offset in x-axis for grasp approach (linear motion along +x)
         pregrasp_pose[0, 3] = pregrasp_pose[0, 3] - alpha
 
         return pregrasp_pose
 
     @staticmethod
-    def pose_to_rotvec_waypoint(pose):
+    def homogeneous_pose_to_position_and_rotvec(pose):
         position = pose[:3, 3]
         rpy = transform.Rotation.from_matrix(pose[:3, :3]).as_rotvec()
         return np.concatenate((position, rpy))
-
-
-if __name__ == "__main__":
-
-    """test setup for fold sequence."""
-    cloth = TowelFold(
-        np.array([-0.1, -0.2, 0]), np.array([0.3, -0.2, 0]), np.array([0.3, -0.3, 0]), np.array([-0.1, -0.3, 0])
-    )
-    print(cloth.pregrasp_pose_in_cloth_frame(0.0))
-    print()
-    print(cloth.robot_to_cloth_base_transform)
-    pregrasp_in_towel = cloth.pregrasp_pose_in_cloth_frame(0.05)
-    pregrasp = cloth.robot_to_cloth_base_transform @ pregrasp_in_towel
-    print(pregrasp)
-    print(cloth.pose_to_rotvec_waypoint(pregrasp))
-    pregrasp_rpy = cloth.pose_to_rotvec_waypoint(pregrasp)
-
-    from robotiq2f_tcp import Robotiq2F85TCP
-
-    vel = 0.3
-    acc = 0.2
-    blend = 0.01
-    wps = []
-    num_waypoints = 50
-    for t in range(0, num_waypoints):
-        i = t / num_waypoints
-        wp = cloth.pose_to_rotvec_waypoint(cloth.robot_to_cloth_base_transform @ cloth.fold_pose_in_cloth_frame(i))
-        wps.append(wp.tolist() + [vel, acc, blend])
-
-    print("external control")
-    rtde_c = RTDEControl("10.42.0.162")
-
-    gripper = Robotiq2F85TCP("10.42.0.162")
-    gripper.activate_gripper()
-    gripper.move_to_position(20, 250, 10)
-
-    rtde_c.moveL(pregrasp_rpy, vel, acc)
-    check = input("continue fold? Press Enter")
-    rtde_c.moveL(
-        cloth.pose_to_rotvec_waypoint(cloth.robot_to_cloth_base_transform @ cloth.fold_pose_in_cloth_frame(0)),
-        vel,
-        acc,
-    )
-    gripper.move_to_position(230, 255, 10)
-    rtde_c.moveL(wps)
-
-    gripper.move_to_position(20, 255, 10)
-    gripper.close()
