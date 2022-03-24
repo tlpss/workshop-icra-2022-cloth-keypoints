@@ -4,6 +4,10 @@
 **wandb**/
 **dataset**
 **artifacts**
+.vscode/
+keypoints/validation_data
+
+# dependency repos
 keypoint-detection/
 BlenderProc/
 airo-blender-toolkit/

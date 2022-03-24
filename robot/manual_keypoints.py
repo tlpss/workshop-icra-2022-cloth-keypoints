@@ -82,8 +82,8 @@ print(cloth.homogeneous_pose_to_position_and_rotvec(pregrasp))
 pregrasp_pose_rotvec = cloth.homogeneous_pose_to_position_and_rotvec(pregrasp)
 
 # compute fold trajectory
-vel = 0.2
-acc = 0.1
+vel = 0.3
+acc = 0.2
 blend = 0.01
 wps = []
 num_waypoints = 50
@@ -98,6 +98,11 @@ for t in range(0, num_waypoints):
 rtde_c = RTDEControl("10.42.0.162")
 gripper = Robotiq2F85TCP("10.42.0.162")
 gripper.activate_gripper()
+
+# move to a safe pose before moving to pregrasp
+pre_fold_waypoint = [0.13, -0.25, 0.15, 0, 3.14,0]
+rtde_c.moveL(pre_fold_waypoint, vel, acc)
+
 gripper.move_to_position(20, 250, 10)
 
 rtde_c.moveL(pregrasp_pose_rotvec, vel, acc)
@@ -113,4 +118,5 @@ gripper.move_to_position(230, 255, 10)
 rtde_c.moveL(wps)
 
 gripper.move_to_position(20, 255, 10)
-gripper.close()
+post_fold_waypoint = [0.13, -0.10, 0.22, 0, 3.14,0]
+rtde_c.moveL(post_fold_waypoint, vel, acc)
