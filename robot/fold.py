@@ -61,8 +61,8 @@ class TowelFold:
 
     def fold_retreat_pose_in_cloth_frame(self):
         grasp_pose = self.grasp_pose_in_cloth_frame(1.0)
-        grasp_pose[3,3] += 0.1 # move 10cm up
-        
+        grasp_pose[3, 3] += 0.1  # move 10cm up
+
     @staticmethod
     def homogeneous_pose_to_position_and_rotvec(pose):
         position = pose[:3, 3]

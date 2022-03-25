@@ -9,4 +9,3 @@ repositories:
         url: https://github.com/DLR-RM/BlenderProc
         version: main
     # keypoint detection
-

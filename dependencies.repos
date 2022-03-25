@@ -1,4 +1,4 @@
-repositories: 
+repositories:
     keypoint_detection:
     type: git
     url: https://github.com/tlpss/keypoint-detection
