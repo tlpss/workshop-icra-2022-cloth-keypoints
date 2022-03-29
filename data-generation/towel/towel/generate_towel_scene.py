@@ -39,7 +39,7 @@ class Towel(abt.KeypointedObject):
             np.array([width / 2, length / 2, 0.0]),
             np.array([width / 2, -length / 2, 0.0]),
         ]
-        edges = [(0, 1), (1, 2), (2, 3), (3, 4)]
+        edges = [(0, 1), (1, 2), (2, 3), (3, 0)]
         faces = [(0, 1, 2, 3)]
 
         return vertices, edges, faces
