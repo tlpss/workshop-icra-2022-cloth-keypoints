@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 
 import cv2
@@ -10,8 +11,8 @@ from keypoint_detection.models.detector import KeypointDetector
 from keypoint_detection.utils.heatmap import get_keypoints_from_heatmap
 from manual_keypoints import fold_cloth
 
-import wandb # noqa
-from datetime import datetime
+import wandb  # noqa
+
 
 def crop(img_batch, start_v, height, start_u, width):
     return img_batch[:, :, start_v : start_v + height, start_u : start_u + width]
@@ -51,7 +52,7 @@ def get_ordered_keypoints(keypoints):
 
 if __name__ == "__main__":
     """
-    1. capture image and crop & resize 
+    1. capture image and crop & resize
     2. do inference to get keypoints
     3. transform keypoints to original image frame
     4. execute fold
@@ -76,27 +77,28 @@ if __name__ == "__main__":
     #     Path(artifact_dir) / "model.ckpt", map_location="cpu", backbone_type="Unet"
     # )
 
-
-    model = KeypointDetector.load_from_checkpoint( Path(__file__).parent / "model.ckpt", map_location="cpu", backbone_type="Unet" )
+    # load local checkpoint
+    model = KeypointDetector.load_from_checkpoint(
+        Path(__file__).parent / "model.ckpt", map_location="cpu", backbone_type="Unet"
+    )
     zed = Zed2i()
     cam_matrix = zed.get_mono_camera_matrix()
     resize_transform = torchvision.transforms.Resize((network_image_size, network_image_size))
     pil_to_torch_transform = torchvision.transforms.ToTensor()
 
-    while(True):
+    while True:
         towel_id = 0
         # towel_id = input("Towel ID")
-        image_base_name = Path(__file__).parent/ "evaluation/" / f"towel{towel_id}_{datetime.now()}"
-        # capture image 
+        image_base_name = Path(__file__).parent / "evaluation/" / f"towel{towel_id}_{datetime.now()}"
+        # capture image
         img = zed.get_mono_rgb_image()  # CxWxH
         img = zed.image_shape_torch_to_opencv(img)  # WxHxC
         img = img[:, :, [2, 1, 0]]  # BGR to RGB
 
-
         # crop and transform
         img = pil_to_torch_transform(img)
         img = torch.unsqueeze(img, 0)
-        img = crop(img,crop_v_start, crop_v_height, crop_u_start, crop_u_width)
+        img = crop(img, crop_v_start, crop_v_height, crop_u_start, crop_u_width)
         img = resize_transform(img)
 
         # get heatmaps and extract keypoints
@@ -106,20 +108,20 @@ if __name__ == "__main__":
         keypoints = get_keypoints_from_heatmap(heatmap[0].cpu(), 25, n_keypoints)
         print(keypoints)
 
-        # display keypoints 
+        # display keypoints
         cv_image = torchvision.transforms.ToPILImage()(img[0])
         cv_image = cv2.cvtColor(np.array(cv_image), cv2.COLOR_RGB2BGR)
         for keypoint in keypoints:
             cv2.circle(cv_image, keypoint, 5, (66, 242, 245), -1)
 
-        cv2.imwrite(str(image_base_name) + "_keypoints.png",cv_image)
+        cv2.imwrite(str(image_base_name) + "_keypoints.png", cv_image)
         cv2.imshow("keypoints", cv_image)
         key = cv2.waitKey()
-        if key == ord("q"): # do this to abort current fold attempt
+        if key == ord("q"):  # do this to abort current fold attempt
             print("aborting")
             continue
 
-        # transform keypoints to original image frame 
+        # transform keypoints to original image frame
         if len(keypoints) != 4:
             print("keypoint detection failed, no 4 keypoints found...")
         else:
@@ -128,7 +130,7 @@ if __name__ == "__main__":
             uncropped_keypoints = uncrop_keypoints(sorted_keypoints, 250, 350, 300, 500, 256)
             print(f"{uncropped_keypoints=}")
             fold_cloth(uncropped_keypoints, zed)
-        
+
             # get post fold image
 
             img = zed.get_mono_rgb_image()  # CxWxH
@@ -137,12 +139,12 @@ if __name__ == "__main__":
             # crop and transform
             img = pil_to_torch_transform(img)
             img = torch.unsqueeze(img, 0)
-            img = crop(img,crop_v_start, crop_v_height, crop_u_start, crop_u_width)
+            img = crop(img, crop_v_start, crop_v_height, crop_u_start, crop_u_width)
             img = resize_transform(img)
             cv_image = torchvision.transforms.ToPILImage()(img[0])
             cv_image = cv2.cvtColor(np.array(cv_image), cv2.COLOR_RGB2BGR)
 
-            cv2.imwrite(str(image_base_name) + "_post_fold.png",cv_image)
+            cv2.imwrite(str(image_base_name) + "_post_fold.png", cv_image)
             cv2.imshow("post fold", cv_image)
             key = cv2.waitKey()
             if key == ord("q"):

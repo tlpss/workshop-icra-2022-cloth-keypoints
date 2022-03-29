@@ -1,14 +1,11 @@
-
 import pickle
 
-import cv2
 import numpy as np
 from camera_toolkit.reproject_to_z_plane import reproject_to_ground_plane
 from camera_toolkit.zed2i import Zed2i
 from fold_parameterization import TowelFold
 from robotiq2f_tcp import Robotiq2F85TCP
 from rtde_control import RTDEControlInterface as RTDEControl
-
 
 # specify aruco position in UR base frame
 aruco_in_robot_x = -0.004
@@ -19,14 +16,14 @@ robot_to_aruco_translation = np.array([aruco_in_robot_x, aruco_in_robot_y, 0.0])
 blend = 0.01
 
 
-def fold_cloth(image_coords: np.ndarray, zed: Zed2i, vel: float = 0.3, acc: float = 0.2, ur_robot_ip = "10.42.0.162"):
-    """script that executes a TowelFold based on the given keypoints 
+def fold_cloth(image_coords: np.ndarray, zed: Zed2i, vel: float = 0.3, acc: float = 0.2, ur_robot_ip="10.42.0.162"):
+    """script that executes a TowelFold based on the given keypoints
     Args:
         image_coords (np.ndarray): 2D np array of 2D coordinates (U,V) of the towel keypoints, ordered clockwise starting from the topleft.
         zed (Zed2i): camera handle
         vel (float, optional): linear velocity for robot motions. Defaults to 0.3.
         acc (float, optional): linear acceleration for robot motion. Defaults to 0.2.
-        ur_robot_ip (string, optional): IP address of the robot controller. 
+        ur_robot_ip (string, optional): IP address of the robot controller.
 
     Raises:
         ValueError: _description_
@@ -73,13 +70,12 @@ def fold_cloth(image_coords: np.ndarray, zed: Zed2i, vel: float = 0.3, acc: floa
     gripper = Robotiq2F85TCP(ur_robot_ip)
     gripper.activate_gripper()
 
-    ### EXECUTE ROBOT MOTIONS ### 
-
+    ### EXECUTE ROBOT MOTIONS ###
 
     # move to a safe pose before moving to pregrasp to avoid collisions
     pre_fold_waypoint = [0.13, -0.25, 0.15, 0, 3.14, 0]
     rtde_c.moveL(pre_fold_waypoint, vel, acc)
-    
+
     # open gripper
     gripper.open()
 
@@ -93,7 +89,7 @@ def fold_cloth(image_coords: np.ndarray, zed: Zed2i, vel: float = 0.3, acc: floa
     rtde_c.moveL(pregrasp_pose_rotvec, vel, acc)
 
     # check to abort if pregrasp pose is not OK.
-    check = input("continue fold? Press Enter")
+    input("continue fold? Press Enter")
 
     # move to grasp pose
     rtde_c.moveL(
