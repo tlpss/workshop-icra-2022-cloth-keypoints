@@ -16,7 +16,14 @@ robot_to_aruco_translation = np.array([aruco_in_robot_x, aruco_in_robot_y, 0.0])
 blend = 0.01
 
 
-def fold_cloth(image_coords: np.ndarray, zed: Zed2i, vel: float = 0.3, acc: float = 0.2, ur_robot_ip="10.42.0.162"):
+def fold_cloth(
+    image_coords: np.ndarray,
+    zed: Zed2i,
+    vel: float = 0.3,
+    acc: float = 0.2,
+    ur_robot_ip="10.42.0.162",
+    ask_before_fold=True,
+):
     """script that executes a TowelFold based on the given keypoints
     Args:
         image_coords (np.ndarray): 2D np array of 2D coordinates (U,V) of the towel keypoints, ordered clockwise starting from the topleft.
@@ -77,10 +84,10 @@ def fold_cloth(image_coords: np.ndarray, zed: Zed2i, vel: float = 0.3, acc: floa
     rtde_c.moveL(pre_fold_waypoint, vel, acc)
 
     # open gripper
-    gripper.open()
+    gripper.move_to_position(5, 255, 10)
 
     # move to pregrasp pose
-    pregrasp_in_towel = cloth.pregrasp_pose_in_cloth_frame(0.05)
+    pregrasp_in_towel = cloth.pregrasp_pose_in_cloth_frame(0.08)
     pregrasp = cloth.robot_to_cloth_base_transform @ pregrasp_in_towel
     print(pregrasp)
     print(cloth.homogeneous_pose_to_position_and_rotvec(pregrasp))
@@ -88,8 +95,9 @@ def fold_cloth(image_coords: np.ndarray, zed: Zed2i, vel: float = 0.3, acc: floa
 
     rtde_c.moveL(pregrasp_pose_rotvec, vel, acc)
 
-    # check to abort if pregrasp pose is not OK.
-    input("continue fold? Press Enter")
+    if ask_before_fold:
+        # check to abort if pregrasp pose is not OK.
+        input("continue fold? Press Enter")
 
     # move to grasp pose
     rtde_c.moveL(
@@ -100,14 +108,19 @@ def fold_cloth(image_coords: np.ndarray, zed: Zed2i, vel: float = 0.3, acc: floa
         acc,
     )
     # close gripper to grasp cloth
-    gripper.move_to_position(230, 255, 10)
+    gripper.move_to_position(230, 255, 255)
 
     # execute fold trajectory
     rtde_c.moveL(wps)
 
     # open gripper to release cloth
-    gripper.open()
+    gripper.move_to_position(5, 255, 10)
 
+    post_fold_waypoint = cloth.homogeneous_pose_to_position_and_rotvec(
+        cloth.robot_to_cloth_base_transform @ cloth.fold_retreat_pose_in_cloth_frame()
+    )
+
+    rtde_c.moveL(post_fold_waypoint, vel, acc)
     # move to final pose to get gripper out of the way for the camera
     post_fold_waypoint = [0.13, -0.10, 0.22, 0, 3.14, 0]
     rtde_c.moveL(post_fold_waypoint, vel, acc)

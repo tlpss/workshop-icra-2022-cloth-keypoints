@@ -34,9 +34,12 @@ class TowelFold:
         """
         assert t <= 1 and t >= 0
         position_angle = np.pi - t * np.pi
-        position = np.array([self.len / 2.4 * np.cos(position_angle), 0, self.len / 2.5 * np.sin(position_angle)])
+        # the radius was manually tuned on a cloth to find a balance between grasp width along the cloth and grasp robustness given the gripper fingers.
+        position = np.array(
+            [(self.len / 2.2 - 0.02) * np.cos(position_angle), 0, (self.len / 2.2 - 0.02) * np.sin(position_angle)]
+        )
 
-        position[2] -= 0.013  # gripper is opened here so point of fingers is now 13mm above closed-TCP
+        position[2] -= 0.03  # gripper is opened here so point of fingers is now this amount above closed-TCP
         position[2] -= 0.01  # offset of the mounting plate
         position[2] += 0.085 / 2 * np.sin(np.pi / 4)  # want the low finger to touch the table so offset from TCP
 
@@ -51,7 +54,7 @@ class TowelFold:
     def grasp_pose_in_cloth_frame(self):
         return self.fold_pose_in_cloth_frame(0)
 
-    def pregrasp_pose_in_cloth_frame(self, alpha=-0.05):
+    def pregrasp_pose_in_cloth_frame(self, alpha=0.10):
         grasp_pose = self.fold_pose_in_cloth_frame(0)
         pregrasp_pose = grasp_pose
         # create offset in x-axis for grasp approach (linear motion along +x)
@@ -60,8 +63,10 @@ class TowelFold:
         return pregrasp_pose
 
     def fold_retreat_pose_in_cloth_frame(self):
-        grasp_pose = self.grasp_pose_in_cloth_frame(1.0)
-        grasp_pose[3, 3] += 0.1  # move 10cm up
+        pose = self.fold_pose_in_cloth_frame(49 / 50)
+        pose[2, 3] += 0.05  # move up
+        pose[0, 3] += 0.01
+        return pose
 
     @staticmethod
     def homogeneous_pose_to_position_and_rotvec(pose):

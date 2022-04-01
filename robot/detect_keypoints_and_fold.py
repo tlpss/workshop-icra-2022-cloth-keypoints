@@ -66,13 +66,12 @@ if __name__ == "__main__":
 
     # ## Get Model checkpoint from wandb
 
-    # checkpoint_reference = "tlips/icra-2022-workshop/model-2tp1tfxe:v8"
+    # checkpoint_reference = "tlips/icra-2022-workshop/model-2qand21y:v11"
     # # download checkpoint locally (if not already cached)
     # run = wandb.init(project="test-project", entity="tlips")
     # artifact = run.use_artifact(checkpoint_reference, type="model")
     # artifact_dir = artifact.download()
-
-    # # load checkpoint
+    # load checkpoint
     # model = KeypointDetector.load_from_checkpoint(
     #     Path(artifact_dir) / "model.ckpt", map_location="cpu", backbone_type="Unet"
     # )
@@ -89,10 +88,11 @@ if __name__ == "__main__":
     while True:
         towel_id = 0
         # towel_id = input("Towel ID")
-        image_base_name = Path(__file__).parent / "evaluation/" / f"towel{towel_id}_{datetime.now()}"
+        image_base_name = Path(__file__).parent / "evaluation/" / f"{datetime.now()}"
         # capture image
         img = zed.get_mono_rgb_image()  # CxWxH
         img = zed.image_shape_torch_to_opencv(img)  # WxHxC
+
         img = img[:, :, [2, 1, 0]]  # BGR to RGB
 
         # crop and transform
@@ -108,11 +108,17 @@ if __name__ == "__main__":
         keypoints = get_keypoints_from_heatmap(heatmap[0].cpu(), 25, n_keypoints)
         print(keypoints)
 
-        # display keypoints
+        # display keypoints and save w/ and w/o keypoints
         cv_image = torchvision.transforms.ToPILImage()(img[0])
         cv_image = cv2.cvtColor(np.array(cv_image), cv2.COLOR_RGB2BGR)
+        cv_image = cv2.resize(cv_image, (crop_u_width, crop_v_height))
+        cv2.imwrite(str(image_base_name) + "_initial_state.png", cv_image)
+
         for keypoint in keypoints:
-            cv2.circle(cv_image, keypoint, 5, (66, 242, 245), -1)
+            # rescale keypoints to match image in original aspect ratio
+            rescaled_x = int(keypoint[0] * crop_u_width / 256)
+            rescaled_y = int(keypoint[1] * crop_v_height / 256)
+            cv2.circle(cv_image, (rescaled_x, rescaled_y), 5, (0, 255, 255), -1)
 
         cv2.imwrite(str(image_base_name) + "_keypoints.png", cv_image)
         cv2.imshow("keypoints", cv_image)
@@ -129,7 +135,7 @@ if __name__ == "__main__":
             print(f"sorted keypoints: {sorted_keypoints}")
             uncropped_keypoints = uncrop_keypoints(sorted_keypoints, 250, 350, 300, 500, 256)
             print(f"{uncropped_keypoints=}")
-            fold_cloth(uncropped_keypoints, zed)
+            fold_cloth(uncropped_keypoints, zed, ask_before_fold=False)
 
             # get post fold image
 
@@ -143,6 +149,7 @@ if __name__ == "__main__":
             img = resize_transform(img)
             cv_image = torchvision.transforms.ToPILImage()(img[0])
             cv_image = cv2.cvtColor(np.array(cv_image), cv2.COLOR_RGB2BGR)
+            cv_image = cv2.resize(cv_image, (crop_u_width, crop_v_height))
 
             cv2.imwrite(str(image_base_name) + "_post_fold.png", cv_image)
             cv2.imshow("post fold", cv_image)
