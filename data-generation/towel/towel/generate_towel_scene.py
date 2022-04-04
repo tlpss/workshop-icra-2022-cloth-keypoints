@@ -3,10 +3,11 @@ import os
 import random
 import sys
 
-import airo_blender_toolkit as abt
 import bpy
 import numpy as np
 from mathutils import Color, Vector
+
+import airo_blender_toolkit as abt
 
 os.environ["INSIDE_OF_THE_INTERNAL_BLENDER_PYTHON_ENVIRONMENT"] = "1"
 import blenderproc as bproc
@@ -38,7 +39,7 @@ class Towel(abt.KeypointedObject):
             np.array([width / 2, length / 2, 0.0]),
             np.array([width / 2, -length / 2, 0.0]),
         ]
-        edges = [(0, 1), (1, 2), (2, 3), (3, 4)]
+        edges = [(0, 1), (1, 2), (2, 3), (3, 0)]
         faces = [(0, 1, 2, 3)]
 
         return vertices, edges, faces
@@ -111,7 +112,6 @@ def generate_scene(seed):
     hdri_path = bproc.loader.get_random_world_background_hdr_img_path_from_haven(haven_folder)
     hdri_rotation = np.random.uniform(0, 2 * np.pi)
     abt.load_hdri(hdri_path, hdri_rotation)
-
 
     # shader graph
     tree = bpy.data.materials["Towel"].node_tree

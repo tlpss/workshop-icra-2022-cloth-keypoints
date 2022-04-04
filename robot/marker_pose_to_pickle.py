@@ -1,3 +1,6 @@
+"""small script to save the pose of an aruco marker to a pickle file for later use.
+"""
+
 import pickle
 
 import cv2
