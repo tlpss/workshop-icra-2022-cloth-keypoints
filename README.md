@@ -1,22 +1,19 @@
 # Learning Keypoints from Synthetic Data for Robotic Cloth Folding
-This repo contains the code for a submission for the ICRA 2022 workshop on Deformable Object Manipulation.
+This repo contains the code and all results for a submission for the ICRA 2022 workshop on Deformable Object Manipulation.
 
-In this work we learn a keypoint detector to perform cloth folding. We use procedural data generation to train a convolutional neural network from synthetic data, enabling low-cost data collection.
- We evaluate the performance of this network on a unimanual robot setup for folding towels
-and find that the grasp and fold success rates are 77% and
-53%, respectively. We conclude that learning keypoint detectors
-from synthetic data for such tasks is a promising research
-direction, discuss some failures and relate them to future work.
+In this work we learn a keypoint detector to perform cloth folding. We use procedural data generation to train a convolutional neural network from synthetic data, enabling low-cost data collection. We evaluate the performance of this network on a unimanual robot setup for folding towels
+and find that the grasp and fold success rates are 77% and 53%, respectively. We conclude that learning keypoint detectors from synthetic data for such tasks is a promising research direction, discuss some failures and relate them to future work.
 
 [![Watch the video](./static/img/video-first-frame.png)](https://youtu.be/T3QdBRcC2NY)
 
+All images from the evaluation can be found [here](https://drive.google.com/drive/folders/1elHCrpqfmvJ7Hl9XkIkyx2jKimwhHobV?usp=sharing).
 
 The code base contains 3 parts:
 - code for the procedural data generation of the data, located in `data-generation/`
-- code to define the convolutional neural network and training procedure, located in `keypoints`
+- code to define the convolutional neural network and training procedure, located in `keypoints/`
 - code that controls the robot, defines the trajectories and captures images from the camera to fold the towels, located in `robot/`
 
-(apologies for the lengthy and ugle setup instructions, a docker container is on its way)
+Below, the instructions are listed to reproduce these 3 parts or to use the pretrained weights. Apologies for the lengthy setup instructions, a docker container is on its way..
 
 ## Data Generation
 
