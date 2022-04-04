@@ -59,4 +59,4 @@ The keypoint detection code can be found here: https://github.com/tlpss/keypoint
 - determine your camera extrinsics using an Aruco marker and the `marker_pose_to_pickle.py` file, this will create a `marker.pickle` file.
 - Measure the position of your marker to the robot base frame manually and update the code at line 11 of `robot/robot_script.py`. Orientations are not supported so make sure to allign the marker to the base frame of the robot.
 - to manually mark the keypoints (to test the trajectories): `python robot/manual_keypoints.py`
-- to detect the keypoints using the pretrained weights and exectute the fold: `python robot/detect_keypoints_and_fold.py`
+- to detect the keypoints using the pretrained weights (`model.ckpt`) and exectute the fold: `python robot/detect_keypoints_and_fold.py`
