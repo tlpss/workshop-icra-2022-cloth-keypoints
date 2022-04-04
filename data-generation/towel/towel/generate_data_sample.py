@@ -9,7 +9,6 @@ from towel.generate_towel_scene import generate_scene
 
 
 def generate_data(output_dir, seed, resolution=256):
-    print("test")
     towel = generate_scene(seed)
     scene = bpy.context.scene
     print("scene generated")

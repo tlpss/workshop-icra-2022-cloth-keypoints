@@ -45,12 +45,13 @@ class Towel(abt.KeypointedObject):
 
 
 def generate_scene(seed):
+    print(seed)
     os.environ["BLENDER_PROC_RANDOM_SEED"] = str(seed)
     os.getenv("BLENDER_PROC_RANDOM_SEED")
     bproc.init()
 
     # renderer settings
-    bpy.context.scene.cycles.adaptive_threshold = 0.05
+    bpy.context.scene.cycles.adaptive_threshold = 0.2
     bpy.context.scene.cycles.use_denoising = False
 
     root_dir = "/home/tlips/Documents/workshop-icra-2022-cloth-keypoints/data-generation"
@@ -77,7 +78,7 @@ def generate_scene(seed):
         uv_layer.data[loop.index].uv *= 12
 
     # create towel
-    towel_length = 0.7  # np.random.uniform(0.2, 0.7)
+    towel_length = np.random.uniform(0.4, 0.7)
     towel_width = np.random.uniform(0.2, towel_length)
     towel = Towel(towel_length, towel_width)
     towel.set_rotation_euler([0, 0, np.random.uniform(0.0, 2 * np.pi)])
@@ -90,8 +91,8 @@ def generate_scene(seed):
 
     color = Color()
     towel_hue = np.random.uniform(0, 1.0)
-    towel_saturation = np.random.uniform(0.4, 0.8)
-    towel_value = np.random.uniform(0.2, 0.8)
+    towel_saturation = np.random.uniform(0.0, 1.0)
+    towel_value = np.random.uniform(0.0, 1.0)
     color.hsv = towel_hue, towel_saturation, towel_value
     towel_material = towel.new_material("Towel")
     towel_material.set_principled_shader_value("Base Color", tuple(color) + (1,))
@@ -141,10 +142,10 @@ def generate_scene(seed):
             tree.links.new(additional_mix_node.outputs["Color"], render_node.inputs["Base Color"])
             # additional_mix_node.inputs["Fac"] = 0.3
             color = Color()
-            towel_hue = np.random.uniform(0, 1.0)
-            towel_saturation = np.random.uniform(0.2, 1.0)
-            towel_value = np.random.uniform(0.2, 0.8)
-            color.hsv = towel_hue, towel_saturation, towel_value
+            hue = np.random.uniform(0, 1.0)
+            saturation = np.random.uniform(0.0, 1.0)
+            value = np.random.uniform(0.0, 1.0)
+            color.hsv = hue, saturation, value
             base_color_node.outputs["Color"].default_value = tuple(color) + (1,)
         except Exception as e:
             # some textures do not have the Mix node as they have no 2 jpg's that are mixed. Leave those as is..
@@ -152,7 +153,7 @@ def generate_scene(seed):
             print(e)
 
     if add_random_objects:
-        n_random_objects = int(np.random.uniform(0, 8.0))
+        n_random_objects = int(np.random.uniform(0, 5.0))
         print(f" {n_random_objects} random objects")
         for i in range(n_random_objects):
             random_object_name = get_random_filename(thingi_folder)
@@ -164,12 +165,12 @@ def generate_scene(seed):
             obj.scale = np.array(
                 [0.1 / (bb_vertex[0]), 0.1 / (bb_vertex[1]), 0.1 / (bb_vertex[2])]
             ) * np.random.uniform(0.5, 3.0)
-            obj.location = (np.random.uniform(-0.8, 0.8), np.random.uniform(-0.8, 0.8), 0)
+            obj.location = (np.random.uniform(-0.5, 0.5), np.random.uniform(-0.5, 0.5), 0)
             material = bpy.data.materials.new(name=f"object{i}")
             color = Color()
             hue = np.random.uniform(0, 1.0)
-            saturation = np.random.uniform(0.2, 1.0)
-            value = np.random.uniform(0.2, 0.8)
+            saturation = np.random.uniform(0.0, 1.0)
+            value = np.random.uniform(0.0, 1.0)
             color.hsv = hue, saturation, value
             material.diffuse_color = tuple(color) + (1,)
             obj.data.materials.append(material)
