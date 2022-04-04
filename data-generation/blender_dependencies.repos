@@ -1,11 +1,9 @@
 repositories:
-    # Data Generation
     airo_blender_toolkit:
         type: git
         url: https://github.com/airo-ugent/airo-blender-toolkit
-        version: main
+        version: 0541f59929560a1b5f34e21ea339a9de181bca1b
     blenderproc:
         type: git
         url: https://github.com/DLR-RM/BlenderProc
         version: main
-    # keypoint detection

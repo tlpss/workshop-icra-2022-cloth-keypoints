@@ -1,14 +1,11 @@
 repositories:
-    keypoint_detection:
-    type: git
-    url: https://github.com/tlpss/keypoint-detection
     version: main
     # robot control
     robotiq_controller:
         type: git
         url: https://github.com/airo-ugent/robotiq2F_tcp.git
-        version: main
+        version: 67794990cc68ea531210856d2bc9320ab0edaee0
     camera_toolkit:
         type: git
         url: https://github.com/tlpss/camera-toolkit.git
-        version: main
+        version: b95d42673a3784111dacf48a6a2c5035b42886c0
