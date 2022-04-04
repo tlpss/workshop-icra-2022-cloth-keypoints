@@ -1,4 +1,5 @@
 import pickle
+from pathlib import Path
 
 import numpy as np
 from camera_toolkit.reproject_to_z_plane import reproject_to_ground_plane
@@ -37,7 +38,7 @@ def fold_cloth(
     """
 
     # load camera to marker transform
-    with open("marker.pickle", "rb") as f:
+    with open(Path(__file__).parent / "marker.pickle", "rb") as f:
         aruco_in_camera_position, aruco_in_camera_orientation = pickle.load(f)
     print(f"{aruco_in_camera_position=}")
     print(f"{aruco_in_camera_orientation=}")

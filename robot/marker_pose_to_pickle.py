@@ -2,6 +2,7 @@
 """
 
 import pickle
+from pathlib import Path
 
 import cv2
 from camera_toolkit.aruco_pose import get_aruco_marker_poses
@@ -20,6 +21,6 @@ print(r)
 cv2.imshow(",", img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-with open("marker.pickle", "wb") as f:
+with open(Path(__file__).parent / "marker.pickle", "wb") as f:
     pickle.dump([t[0], r[0]], f)
 zed.close()
