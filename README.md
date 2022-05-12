@@ -39,7 +39,7 @@ Additionally, we use the excellent [BlenderProc](https://github.com/DLR-RM/Blend
 The keypoint detection code can be found here: https://github.com/tlpss/keypoint-detection
 
 ### Local Installation
-- git clone the repo `git clone https://github.com/tlpss/keypoint-detection#c793f3cf6d803d942054a36ae9b44c410cffa2b3` in the `keypoints` folder.
+- git clone the repo at the specific commit using `git clone https://github.com/tlpss/keypoint-detection && git checkout c793f3cf6d803d942054a36ae9b44c410cffa2b3` in the `keypoints` folder.
 - Follow the instructions at https://github.com/tlpss/keypoint-detection to install the dependencies.
 
 ### CNN
@@ -49,11 +49,11 @@ The keypoint detection code can be found here: https://github.com/tlpss/keypoint
 
 ## Robot
 ### Local installation
-- get yourself a UR3e, ZED2i and Robotiq-2F85 gripper. If you have different hardware, you will need to cherry-pick the relevant parts of the code in the `robot/` folder.
+- This work uses a UR3e, ZED2i and Robotiq-2F85 gripper. If you have different hardware, you will need to handpick the relevant parts of the code in the `robot/` folder.
 - print 2 fingers using Flexfill-98 TPU filament. The .stl file can be found under `static/cad/`
-- pip install opencv2: `pip install opencv-contrib-python==4.5.5.64`
-- clone the unreleased dependencies using `vcs import robot < robot/blender_dependencies.repos`
-- pip install them in the same conda environment as the keypoint detection code
+- pip install opencv2: `pip install opencv-contrib-python==4.5.5.64` in the conda environment of the keypoint detection code
+- clone the unreleased dependencies using `vcs import robot < robot/dependencies.repos`
+- pip install them in the same python environment as the keypoint detection code
 
 ## Robotic Folding
 - determine your camera extrinsics using an Aruco marker and the `marker_pose_to_pickle.py` file, this will create a `marker.pickle` file.
