@@ -3,10 +3,11 @@ import os
 import random
 import sys
 
-import airo_blender_toolkit as abt
 import bpy
 import numpy as np
 from mathutils import Color, Vector
+
+import airo_blender_toolkit as abt
 
 os.environ["INSIDE_OF_THE_INTERNAL_BLENDER_PYTHON_ENVIRONMENT"] = "1"
 import blenderproc as bproc
