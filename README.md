@@ -8,12 +8,12 @@ and find that the grasp and fold success rates are 77% and 53%, respectively. We
 
 All images from the evaluation can be found [here](https://drive.google.com/drive/folders/1elHCrpqfmvJ7Hl9XkIkyx2jKimwhHobV?usp=sharing).
 
-The code base contains 3 parts:
+The code base has 3 main components:
 - code for the procedural data generation of the data, located in `data-generation/`
 - code to define the convolutional neural network and training procedure, located in `keypoints/`
 - code that controls the robot, defines the trajectories and captures images from the camera to fold the towels, located in `robot/`
 
-Below, the instructions are listed to reproduce these 3 parts or to use the pretrained weights. Apologies for the lengthy setup instructions, a docker container is on its way..
+Below, the instructions are listed to reproduce these 3 parts. We also provide the pretrained weights and all learning curves.
 
 ## Data Generation
 
@@ -55,7 +55,7 @@ The keypoint detection code can be found here: https://github.com/tlpss/keypoint
 - clone the unreleased dependencies using `vcs import robot < robot/dependencies.repos`
 - pip install them in the same python environment as the keypoint detection code
 
-## Robotic Folding
+### Robotic Folding
 - determine your camera extrinsics using an Aruco marker and the `marker_pose_to_pickle.py` file, this will create a `marker.pickle` file.
 - Measure the position of your marker to the robot base frame manually and update the code at line 11 of `robot/robot_script.py`. Orientations are not supported so make sure to allign the marker to the base frame of the robot.
 - to manually mark the keypoints (to test the trajectories): `python robot/manual_keypoints.py`
