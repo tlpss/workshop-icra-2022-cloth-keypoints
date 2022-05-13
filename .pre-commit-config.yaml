@@ -23,6 +23,9 @@ repos:
         name: isort - sort imports
         entry: isort --profile black --line-length 119
         files: \.py$
+        args:
+          - --thirdparty=wandb
+
 -   repo: https://github.com/psf/black
     rev: 22.3.0
     hooks:
