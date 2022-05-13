@@ -6,12 +6,11 @@ import numpy as np
 import torch
 import torchvision
 import torchvision.transforms
+import wandb  # noqa
 from camera_toolkit.zed2i import Zed2i
 from keypoint_detection.models.detector import KeypointDetector
 from keypoint_detection.utils.heatmap import get_keypoints_from_heatmap
 from manual_keypoints import fold_cloth
-
-import wandb  # noqa
 
 
 def crop(img_batch, start_v, height, start_u, width):
