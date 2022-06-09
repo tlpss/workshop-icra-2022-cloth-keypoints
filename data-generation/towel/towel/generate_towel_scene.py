@@ -10,7 +10,7 @@ from mathutils import Color, Vector
 import airo_blender_toolkit as abt
 
 os.environ["INSIDE_OF_THE_INTERNAL_BLENDER_PYTHON_ENVIRONMENT"] = "1"
-import blenderproc as bproc
+import blenderproc as bproc  # noqa
 
 
 def get_random_filename(filedir):

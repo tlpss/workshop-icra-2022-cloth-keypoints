@@ -1,14 +1,49 @@
-# Learning Keypoints from Synthetic Data for Robotic Cloth Folding
-This repo contains the code and all results for a submission for the ICRA 2022 workshop on Deformable Object Manipulation.
 
-In this work we learn a keypoint detector to perform cloth folding. We use procedural data generation to train a convolutional neural network from synthetic data, enabling low-cost data collection. We evaluate the performance of this network on a unimanual robot setup for folding towels
+<h1 align="center">Learning Keypoints from Synthetic Data
+
+for Robotic Cloth Folding </h1>
+
+
+
+<p align="center">
+  <a href="https://www.tlips.be">Thomas Lips</a>,
+  <a href="https://github.com/Victorlouisdg">Victor-Louis De Gusseme</a>,
+  <a href="https://airo.ugent.be/members/francis/">Francis wyffels</a>
+  <br/>
+  <a href="https://www.imperial.ac.uk/dyson-robotics-lab/">AI and Robotics Lab (AIRO) </a>,
+  <a href="https://www.ugent.be/">Ghent University</a>
+  <br/>
+  2nd workshop on Representing and Manipulating Deformable Objects (<a href="https://deformable-workshop.github.io/icra2022/">RMDO</a>) <br/>
+  IEEE International Conference on Robotics and Automation (ICRA), 2022
+</p>
+
+
+
+<div align="center">
+  <img src="assets/img/cloth-keypoints-overview.png" width="100%">
+</div>
+
+<p align="center">
+  <a href="https://arxiv.org/abs/2205.06714"><b>Paper</b></a> |
+  <a href="https://biblio.ugent.be/publication/8755606/file/8755643.pdf"><b>Poster</b></a> |
+  <a href="https://youtu.be/EVAXd6waVqg?t=6065"><b>Spotlight Talk</b></a> |
+  <a href="https://www.youtube.com/watch?v=T3QdBRcC2NY"><b>Technical Video</b></a>
+
+
+</p>
+
+
+
+In this work we learn to detect the corners of cloth items. We use procedural data generation to train a convolutional neural network from synthetic data, enabling low-cost data collection. We evaluate the zero-shot performance of this network on a unimanual robot setup for folding towels
 and find that the grasp and fold success rates are 77% and 53%, respectively. We conclude that learning keypoint detectors from synthetic data for such tasks is a promising research direction, discuss some failures and relate them to future work.
 
-[![Watch the video](./static/img/video-first-frame.png)](https://youtu.be/T3QdBRcC2NY)
+---
 
-All images from the evaluation can be found [here](https://drive.google.com/drive/folders/1elHCrpqfmvJ7Hl9XkIkyx2jKimwhHobV?usp=sharing).
 
-The code base has 3 main components:
+
+
+
+The codebase has 3 main components:
 - code for the procedural data generation of the data, located in `data-generation/`
 - code to define the convolutional neural network and training procedure, located in `keypoints/`
 - code that controls the robot, defines the trajectories and captures images from the camera to fold the towels, located in `robot/`
@@ -60,3 +95,5 @@ The keypoint detection code can be found here: https://github.com/tlpss/keypoint
 - Measure the position of your marker to the robot base frame manually and update the code at line 11 of `robot/robot_script.py`. Orientations are not supported so make sure to allign the marker to the base frame of the robot.
 - to manually mark the keypoints (to test the trajectories): `python robot/manual_keypoints.py`
 - to detect the keypoints using the pretrained weights (`model.ckpt`) and exectute the fold: `python robot/detect_keypoints_and_fold.py`
+
+All images from the evaluation can be found [here](https://drive.google.com/drive/folders/1elHCrpqfmvJ7Hl9XkIkyx2jKimwhHobV?usp=sharing).
