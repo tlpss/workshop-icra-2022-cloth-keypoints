@@ -23,7 +23,7 @@ repos:
         name: isort - sort imports
         entry: isort --profile black --line-length 119
         files: \.py$
-        exclude: ^data-generation/generate_towel_scene.py
+        exclude: ^/data-generation/towel/towel/generate_towel_scene.py
         args:
           - --thirdparty=wandb
 

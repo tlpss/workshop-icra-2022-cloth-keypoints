@@ -2,12 +2,12 @@ import argparse
 import os
 import random
 import sys
+from pathlib import Path
 
+import airo_blender_toolkit as abt
 import bpy
 import numpy as np
 from mathutils import Color, Vector
-
-import airo_blender_toolkit as abt
 
 os.environ["INSIDE_OF_THE_INTERNAL_BLENDER_PYTHON_ENVIRONMENT"] = "1"
 import blenderproc as bproc  # noqa
@@ -55,7 +55,7 @@ def generate_scene(seed):
     bpy.context.scene.cycles.adaptive_threshold = 0.2
     bpy.context.scene.cycles.use_denoising = False
 
-    root_dir = "/home/tlips/Documents/workshop-icra-2022-cloth-keypoints/data-generation"
+    root_dir = Path(__file__).parents[2]
     haven_folder = os.path.join(root_dir, "utils", "assets", "haven")
     thingi_folder = os.path.join(root_dir, "utils", "assets", "thingi10")
 

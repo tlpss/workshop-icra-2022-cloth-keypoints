@@ -9,7 +9,8 @@ keypoints/validation_data
 
 # dependency repos
 keypoint-detection/
-BlenderProc/
-airo-blender-toolkit/
+data-generation/blender-3.0.1-linux-x64/**
+data-generation/blenderproc/
+data-generation/airo-blender-toolkit/
 robot/evaluation
 keypoints/notebooks/images/

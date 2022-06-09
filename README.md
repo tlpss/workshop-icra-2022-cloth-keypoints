@@ -44,31 +44,30 @@ and find that the grasp and fold success rates are 77% and 53%, respectively. We
 
 
 The codebase has 3 main components:
-- code for the procedural data generation of the data, located in `data-generation/`
-- code to define the convolutional neural network and training procedure, located in `keypoints/`
-- code that controls the robot, defines the trajectories and captures images from the camera to fold the towels, located in `robot/`
 
-Below, the instructions are listed to reproduce these 3 parts. We also provide the pretrained weights and all learning curves.
+<a href="#Data Generation">Procedural Data Generation</a>
+
+<a href="#Keypoint Detection">Keypoint Detection</a>
+
+<a href="#Robot">Robot Folding</a>
+
+
+We also provide the pretrained weights and all training logs.
 
 ## Data Generation
 
 To generate synthetic images of unfolded cloths, we make use of [Blender](https://www.blender.org/), version 3.0.1
-Additionally, we use the excellent [BlenderProc](https://github.com/DLR-RM/BlenderProc) library and our own [Blender-toolbox](https://github.com/airo-ugent/airo-blender-toolkit).
-### Local Installation
-- download [blender 3.0](https://download.blender.org/release/Blender3.0/) (which comes with its own python distribution) and unzip the file.
-- pip install [vcs-tool](https://github.com/dirk-thomas/vcstool) using `sudo pip install vcstool`
-- in the `data-generation` folder, clone the unreleased dependencies using `vcs import data-generation < data-generation/blender_dependencies.repos`
-- `cd <path-to-blender>/blender-3.0.1-linux-x64/3.0/python/bin`
-- run `./python3.9 -m ensurepip` to make sure pip is installed in the blender python distribution
-- pip install BlenderProc and the Airo-Blender-Toolkit within the blender python distribution using `pip install /<location-of-this-repo>/data-generation/blenderproc` and `pip install /<location-of-this-repo>/data-generation/airo_blender_toolkit`.
-- pip install the towel package in this repo in the blender python distribution using `pip install -e <location-of-this-repo>/data-generation/towel`
-- download the textures and HDRIs, using `python data-generation/utils/fetch_blender_polyhaven_assets.py`
-- download the Thingi10K distractor objects with `python data-generation/utils/Thingi10K_genus_lt_3.py --output ./assets/thingi10`, do not forget to create this directory first.
+Additionally, we use the excellent [BlenderProc](https://github.com/DLR-RM/BlenderProc) library and our own [Blender-toolbox](https://github.com/airo-ugent/airo-blender-toolkit). The pipeline is shown in the figure below, for more details we refer to the paper.
+<div align="center">
+  <img src="assets/img/blender-pipeline.png" width="100%">
+</div>
 
+### Local Installation
+- run `cd data-generation && bash setup.sh` to install blender and the dependencies, as well as to download all the assets (might take a while).
 
 ### Data generation
-- to create a scene, run `/<path-to-blender>/blender-3.0.1-linux-x64/./blender --python data-generation/towel/towel/generate_towel_scene.py` from the root of this repository. Blender will now open and you should see the scene.
-- to generate the entire dataset used in this work, run `<path-to-blender>/blender-3.0.1-linux-x64/./blender --python data-generation/towel/towel/generate_dataset.py -- --amount_of_samples 30000 --resolution 256 --start_seed 0`. By default the dataset will be created in `home/datasets` but  this can be changed if desired.
+- to create a scene, run `blender-3.0.1-linux-x64/./blender --python data-generation/towel/towel/generate_towel_scene.py` in the data-generation folder of this repository. Blender will now open and you should see the scene.
+- to generate the entire dataset used in this work, run `/blender-3.0.1-linux-x64/./blender --python data-generation/towel/towel/generate_dataset.py -- --amount_of_samples 30000 --resolution 256 --start_seed 0`. By default the dataset will be created in `home/datasets` but  this can be changed if desired.
 
 ## Keypoint Detection
 The keypoint detection code can be found here: https://github.com/tlpss/keypoint-detection
@@ -97,3 +96,14 @@ The keypoint detection code can be found here: https://github.com/tlpss/keypoint
 - to detect the keypoints using the pretrained weights (`model.ckpt`) and exectute the fold: `python robot/detect_keypoints_and_fold.py`
 
 All images from the evaluation can be found [here](https://drive.google.com/drive/folders/1elHCrpqfmvJ7Hl9XkIkyx2jKimwhHobV?usp=sharing).
+
+
+## Citation
+```
+@inproceedings{lips2022synthkeypoints,
+  title={Learning Keypoints from Synthetic Data for Robotic Cloth Folding},
+  author={Lips, Thomas and De Gusseme, Victor-Louis and others},
+  journal={2nd workshop on Representing and Manipulating Deformable Objects - ICRA},
+  year={2022}
+}
+```

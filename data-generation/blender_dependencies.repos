@@ -6,4 +6,4 @@ repositories:
     blenderproc:
         type: git
         url: https://github.com/DLR-RM/BlenderProc
-        version: main
+        version: aa6c5f11c3f5185bc3a19780457f8fe346a19450
