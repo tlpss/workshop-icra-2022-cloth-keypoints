@@ -10,7 +10,7 @@ for Robotic Cloth Folding </h1>
   <a href="https://github.com/Victorlouisdg">Victor-Louis De Gusseme</a>,
   <a href="https://airo.ugent.be/members/francis/">Francis wyffels</a>
   <br/>
-  <a href="https://www.imperial.ac.uk/dyson-robotics-lab/">AI and Robotics Lab (AIRO) </a>,
+  <a href="https://airo.ugent.be/">AI and Robotics Lab (AIRO) </a>,
   <a href="https://www.ugent.be/">Ghent University</a>
   <br/>
   2nd workshop on Representing and Manipulating Deformable Objects (<a href="https://deformable-workshop.github.io/icra2022/">RMDO</a>) <br/>
