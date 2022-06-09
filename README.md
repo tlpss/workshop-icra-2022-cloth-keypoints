@@ -45,9 +45,9 @@ and find that the grasp and fold success rates are 77% and 53%, respectively. We
 
 The codebase has 3 main components:
 
-<a href="#Data Generation">Procedural Data Generation</a>
+<a href="#data-generation">Procedural Data Generation</a>
 
-<a href="#Keypoint Detection">Keypoint Detection</a>
+<a href="#keypoint-detection">Keypoint Detection</a>
 
 <a href="#Robot">Robot Folding</a>
 

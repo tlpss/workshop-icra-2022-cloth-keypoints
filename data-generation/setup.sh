@@ -1,9 +1,9 @@
 # install blender
 #wget https://download.blender.org/release/Blender3.0/blender-3.0.1-linux-x64.tar.xz
-#tar -xf blender-3.0.1-linux-x64.tar.xz 
+#tar -xf blender-3.0.1-linux-x64.tar.xz
 
 # git clone dependencies
-sudo pip install vcstool 
+sudo pip install vcstool
 vcs import . < blender_dependencies.repos
 
 # pip install dependencies
