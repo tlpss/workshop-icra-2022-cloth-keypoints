@@ -1,4 +1,8 @@
 
+
+This project was continued [here](https://github.com/tlpss/synthetic-cloth-data), where we delved deeper into synthetic data generation for various cloth categories.
+
+
 <h1 align="center">Learning Keypoints from Synthetic Data
 
 for Robotic Cloth Folding </h1>
